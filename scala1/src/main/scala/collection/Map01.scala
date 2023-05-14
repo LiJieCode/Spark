@@ -9,10 +9,8 @@ object Map01 {
 
         println(str1)
         
-        // 这里我写一点东西
-
-        println("li")
-
+        println("lijiuzhen")
+        
+        val list1 = List(1,2,3,4)
     }
-
 }
