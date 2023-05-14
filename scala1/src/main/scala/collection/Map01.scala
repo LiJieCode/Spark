@@ -10,6 +10,9 @@ object Map01 {
         println(str1)
         
         // 这里我写一点东西
+
+        println("li")
+
     }
 
 }
