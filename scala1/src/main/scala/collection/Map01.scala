@@ -8,10 +8,10 @@ object Map01 {
         val str1: String = map.mkString(",")
 
         println(str1)
-        
-        // 这里我写一点东西
 
         println("li")
+
+        println("fix-hot")
 
     }
 }
