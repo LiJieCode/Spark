@@ -5,9 +5,9 @@ object Map01 {
 
         val map = Map(1 -> "zhang1", 2 -> "zhang2")
 
-        val str: String = map.mkString(",")
+        val str1: String = map.mkString(",")
 
-        println(str)
+        println(str1)
     }
 
 }
