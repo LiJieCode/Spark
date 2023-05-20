@@ -7,8 +7,8 @@ object Demo01 {
 
     def main(args: Array[String]): Unit = {
 
+        //
         val sparkConf: SparkConf = new SparkConf().setMaster("local[*]").setAppName("0512")
-
         val sc = new SparkContext(sparkConf)
 
         // 1、读取文件数据
@@ -23,6 +23,9 @@ object Demo01 {
                 datas(6) != "-1" // 等于-1，表示不是点击数据
             }
         )
+
+
+
 
 
         // 3、
