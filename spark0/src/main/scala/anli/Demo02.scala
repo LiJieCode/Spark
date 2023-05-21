@@ -3,12 +3,13 @@ package anli
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
+
 /**
  *
- * 需求一：
+ * 优化需求一：
  *
  */
-object Demo01 {
+object Demo02 {
 
     def main(args: Array[String]): Unit = {
 
@@ -19,6 +20,8 @@ object Demo01 {
         // 1、读取文件数据
         val rdd: RDD[String] = sc.textFile("data/user_visit_action.txt")
 
+        // 因为初始的这个RDD经常被用到，所以可以放在缓存中
+        rdd.cache()
 
         // 2、统计品类的点击数量
         // 2.1 先过滤出点击的数据
@@ -79,35 +82,36 @@ object Demo01 {
 
         // payWC.foreach(println)
 
+
         // 5、将品类进行排序，并取前10名
         // 点击量排序，下单量排序，支付量排序
         // 利用元组排序，先比较第一个，再比较第二个，...
 
-        val cgRDD: RDD[(String, (Iterable[Int], Iterable[Int], Iterable[Int]))] = clickWC.cogroup(orderWC, payWC)
 
-        val ansRDD: RDD[(String, (Int, Int, Int))] = cgRDD.mapValues {
-            case (clickIter, orderIter, payIter) => {
-                var clickNum = 0
-                val iter1: Iterator[Int] = clickIter.iterator
-                if (iter1.hasNext) {
-                    clickNum = iter1.next()
-                }
+        // (品类ID, 点击数量) => (品类ID, (点击数量, 0, 0))
+        // (品类ID, 下单数量) => (品类ID, (0, 下单数量, 0))
+        //                    => (品类ID, (点击数量, 下单数量, 0))
+        // (品类ID, 支付数量) => (品类ID, (0, 0, 支付数量))
+        //                    => (品类ID, (点击数量, 下单数量, 支付数量))
+        // ( 品类ID, ( 点击数量, 下单数量, 支付数量 ) )
 
-                var orderNum: Int = 0
-                val iter2: Iterator[Int] = orderIter.iterator
-                if (iter2.hasNext) {
-                    orderNum = iter2.next()
-                }
-
-                var payNum: Int = 0
-                val iter3: Iterator[Int] = payIter.iterator
-                if (iter3.hasNext) {
-                    payNum = iter3.next()
-                }
-
-                (clickNum, orderNum, payNum)
+        val rdd1: RDD[(String, (Int, Int, Int))] = clickWC.map {
+            case (cid, cnt) => {
+                (cid, (cnt, 0, 0))
             }
         }
+        val rdd2: RDD[(String, (Int, Int, Int))] = orderWC.mapValues((0, _, 0))
+        val rdd3: RDD[(String, (Int, Int, Int))] = orderWC.mapValues((0, 0, _))
+
+        // 将三个数据源合并在一起，统一进行聚合计算
+        val rdd4: RDD[(String, (Int, Int, Int))] = rdd1.union(rdd2).union(rdd3)
+
+        // 聚合
+        val ansRDD: RDD[(String, (Int, Int, Int))] = rdd4.reduceByKey(
+            // 这里的t1 和 t2 都是元组的Value值
+            (t1, t2) => (t1._1 + t2._1, t1._2 + t2._2, t1._3 + t2._3)
+        )
+
 
         val result: Array[(String, (Int, Int, Int))] = ansRDD.sortBy(_._2, false).take(10)
 
@@ -132,5 +136,5 @@ object Demo01 {
                                 pay_product_ids: String,//一次支付中所有商品的 ID 集合
                                 city_id: Long
                               )//城市 id
-
+    
 }
