@@ -13,7 +13,7 @@ import scala.collection.mutable
  *
  */
 
-object demo02 {
+object Spark02_Queue {
     def main(args: Array[String]): Unit = {
 
         val sparkConf: SparkConf = new SparkConf().setMaster("local[*]").setAppName("demo01")

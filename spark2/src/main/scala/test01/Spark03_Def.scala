@@ -12,11 +12,11 @@ import scala.util.Random
 
 /**
  *
- * 自定义数据源
+ * 自定义数据源  P190-P191
  *
  */
 
-object demo03 {
+object Spark03_Def {
     def main(args: Array[String]): Unit = {
 
         val sparkConf: SparkConf = new SparkConf().setMaster("local[*]").setAppName("demo01")

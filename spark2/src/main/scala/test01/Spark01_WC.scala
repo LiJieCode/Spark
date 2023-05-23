@@ -9,7 +9,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
  * WordCount
  *
  */
-object demo01 {
+object Spark01_WC {
     def main(args: Array[String]): Unit = {
 
         val sparkConf: SparkConf = new SparkConf().setMaster("local[*]").setAppName("demo01")
