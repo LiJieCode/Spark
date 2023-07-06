@@ -29,7 +29,6 @@ object Spark01Hive {
         spark.close()
 
 
-
     }
 
 }
